@@ -1,0 +1,633 @@
+#! /bin/bash
+
+
+
+
+
+function Del()
+{
+while true
+do
+clear
+! printf "Enter name: "
+read name
+if (($name == 0))
+then
+User
+fi
+if grep "$name:x" /etc/passwd ;
+then
+! userdel -r $name
+break
+else
+echo "User is absent!"
+fi
+done
+}
+
+
+
+function Coment()
+{
+while true
+do
+clear
+! printf "Enter name: "
+read name
+! printf "Enter coment: "
+read com
+
+if (($name == 0))
+then
+Mod_U
+fi
+if grep "$name:x" /etc/passwd ;
+then
+! usermod -c $com $name
+break
+else
+echo "User is abset!"
+Coment
+fi
+done
+echo "Coment update!"
+clear
+}
+
+
+function Expire()
+{
+while true
+do
+clear
+! printf "User name:"
+read name
+echo "New expire time:"
+! printf "Year:"
+read y
+! printf "Month:"
+read m
+! printf "Day"
+read d
+
+if (($name == 0))
+then
+Mod_U
+fi
+
+
+if grep "$name:x" /etc/passwd ;
+then
+! usermod -e $y-$m-$d $name
+break
+else
+echo "User is abset!"
+fi
+
+done
+echo "User time changed"
+read k
+}
+
+function Gid()
+{
+while true
+do
+clear
+! printf "User name:"
+read name
+! printf "GID:"
+read G
+
+if (($name == 0))
+then
+Mod_U
+fi
+
+if grep "$name:x" /etc/passwd ;
+then 
+if grep "x:$G" /etc/group ;
+then
+echo "GID already in used!"
+read p
+Gid
+else
+! groupmod -g $G $name
+! usermod -g $G $name
+fi 
+break
+else
+echo "User id absent!"
+read k
+fi
+
+done
+echo "User GID changed"
+read k
+}
+
+
+function Uid()
+{
+while true
+do
+clear
+! printf "User name:" 
+read name
+! printf "New UID:"
+read U
+
+if (($name == 0))
+then
+Mod_U
+fi
+
+if grep "$name:x" /etc/passwd ;
+then
+
+if grep "x:$U:" /etc/passwd ;
+then
+echo "UID already is used!"
+read k
+Uid
+else
+! usermod -u $U $name
+fi
+break
+else
+echo "Name is absent!"
+
+fi
+
+done
+
+echo "User UID changed"
+read k
+}
+
+
+
+
+function Name()
+{
+
+while true
+do
+clear
+! printf "User name:"
+read name
+! printf "New name:"
+read Nname
+
+if (($name == 0))
+then
+Mod_U
+fi
+
+
+if grep "$name:x" /etc/passwd ;
+then
+if grep "$Nname:x" /etc/passwd ;
+then
+echo "New name already in use!"
+read k
+Name
+else
+! usermod -l $Nname $name
+! groupmod -n $Nname $name
+fi
+break
+else
+echo "User is absent!"
+fi
+
+done
+echo "User name Changed"
+read k
+}
+
+function Mod_U()
+{
+clear 
+while true
+do
+clear
+echo "Changer"
+echo "##############"
+echo "#1.Name      #"
+echo "#2.UID       #"
+echo "#3.GID       #"
+echo "#4.Expire    #"
+echo "#5.Coment    #"
+echo "#6.Back      #"
+echo "##############"
+! printf "Choice:"
+read c
+
+case $c in
+1)
+Name
+;;
+2)
+Uid
+;;
+3)
+Gid
+;;
+4)
+Expire
+;;
+5)
+Coment
+;;
+6)
+User
+;;
+
+
+esac
+done
+}
+
+
+function Create_U()
+{
+clear
+while true
+do
+! printf "Enter name:"
+read name
+if (($name == 0))
+then
+User
+fi
+if grep "$name:x" /etc/passwd ;
+then
+
+echo -e "Name already in use. \nTry again!"
+read k
+else
+
+break
+
+fi
+clear
+done
+clear
+
+
+while true
+do
+
+! printf "Enter UID:"
+
+read U
+
+if grep "x:$U:" /etc/passwd ;
+then
+
+echo -e "UID already in use.\nTry again!"
+read k
+
+else
+
+break
+fi
+clear
+done
+clear
+while true
+do
+! printf "Enter GID:"
+read G
+if grep "x:$G:" /etc/group ;
+then
+break
+else
+! groupadd -g $G $name
+break
+fi
+done
+clear
+
+echo "Enter expire time:"
+! printf "Year:"
+read y
+! printf "Month:"
+read m
+! printf "Day:"
+read d
+clear
+! printf "Enter Comment:"
+read Com
+
+! useradd -u $U -g $G -e $y-$m-$d -c "$Com" $name
+}
+
+
+
+
+function Group()
+{
+while true
+do
+clear
+echo "##############"
+echo "#1.Create    #"
+echo "#2.Mod       #"
+echo "#3.Del       #"
+echo "#4.Back      #"
+echo "##############"
+! printf "#Choice:    #"
+read p
+case $p in
+1)
+Creat_G
+;;
+2)
+Mod_G
+;;
+3)
+Del_G
+;;
+4)
+main
+;;
+esac
+
+done
+
+}
+
+
+
+function User()
+{
+while true
+do
+clear
+echo "##############"
+echo "#1.Create    #"
+echo "#2.Mod       #"
+echo "#3.Del       #"
+echo "#4.Back      #"
+echo "##############"
+! printf ">Choice:"
+
+read c
+case $c in
+1)
+Create_U
+;;
+2)
+Mod_U
+;;
+3)
+Del_U
+;;
+4)
+main
+;;
+esac
+done
+}
+
+function Del_G()
+{
+while true
+do
+clear
+! printf "Enter name:"
+read name
+
+
+if (($name == 0))
+then
+Group
+fi
+if grep "$name:x" /etc/group ;
+then
+break
+else
+echo "Name is absent!"
+read k
+fi
+
+done
+! groupdel $name
+echo "Group delete"
+read k
+}
+
+
+function Gid_G()
+{
+while true
+do
+clear
+! printf "Enter name:"
+read name
+if (($name == 0))
+then
+Group
+fi
+if grep "$name:x" /etc/group ;
+then
+break
+else
+echo "Name is absent!"
+read k
+fi
+done
+
+! printf "Enter GID:"
+read G
+if grep "$G:x" /etc/group ;
+then
+echo "GID already in use!"
+read k
+else
+break
+
+fi
+! groupmod -g $G $name
+echo "Group update"
+read k
+}
+
+
+
+function Name_G()
+{
+while true
+do
+clear
+! printf "Enter Group Name:"
+read Name
+
+if (($Name == 0))
+then
+Group
+fi
+
+if grep "$Name:x" /etc/group ;
+then
+break
+else
+echo "Name is absent!"
+read k
+fi
+done
+while true
+do
+! printf "Enter New Name:"
+read NName
+
+if grep "$NName:x" /etc/group ;
+then
+echo "This name already in use!"
+else
+break
+fi
+done
+
+! groupmod -n $NName $Name
+echo "Group update"
+read k
+}
+
+function Mod_G()
+{
+while true
+do
+clear
+echo "##############"
+echo "#1.Name      #"
+echo "#2.GID       #"
+echo "#3.Back      #"
+echo "##############"
+! printf ">Choice:"
+read k
+
+case $k in
+1)
+Name_G
+;;
+2)
+Gid_G
+;;
+3)
+Group
+;;
+
+esac
+done
+}
+
+
+function Create_G()
+{
+while true
+do
+clear
+! printf "Enter Group name: "
+read name
+if (($name == 0))
+then
+Group
+fi
+
+if grep "$name:x" /etc/group
+then
+echo "This name already in use!"
+
+else
+break
+
+fi
+done
+while true
+do
+clear
+
+! printf "Entre GID:"
+read G
+
+if grep "x:$G:" /etc/group ;
+then
+echo "This GID already in use!"
+else
+break
+fi
+done
+! groupadd -g $G $name
+echo "Group added"
+
+}
+
+function Group()
+{
+while true
+do
+clear
+echo "##############"
+echo "#1.Create    #"
+echo "#2.Mod       #"
+echo "#3.Delete    #"
+echo "#4.Back      #"
+echo "##############"
+! printf ">Choice:"
+read c
+case $c in
+1)
+Create_G
+;;
+2)
+Mod_G
+;;
+3)
+Del_G
+;;
+4)
+main
+;;
+
+esac
+done
+
+
+}
+
+
+function main()
+{
+while true
+do
+clear
+echo "##############"
+echo "#1.Users     #"
+echo "#2.Groups    #"
+echo "#3.Exit      #"
+echo "##############"
+! printf ">Choice:"
+
+read p
+
+
+
+
+case $p in
+1)
+User
+;;
+2)
+Group
+;;
+3)
+exit 0
+;;
+esac
+
+done
+}
+main
